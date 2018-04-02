@@ -1,0 +1,129 @@
+.playe {
+	text-align:center;
+	height:100%;
+}
+
+.playe * {
+	text-align:center;
+}
+
+.playe-title {
+
+}
+.playe-text{
+	
+}
+.playe-button{
+	margin:-1px;
+	cursor:pointer;
+	transition:0.1s;
+	font-size:3vh;
+	font-weight:bold;
+}
+.playe-button:hover{
+	color:rgb(274,264,229);
+}
+.playe-button:active{
+	background-color:rgba(255,255,255,0.3);
+	color:rgb(222,2,9);
+}
+.playing .playe-play{
+	color:rgb(222,2,9);
+	font-weight:bold;
+	text-shadow:0 0 3px white;
+}
+.stopped .playe-pause{
+	color:rgb(222,2,9);
+	font-weight:bold;
+	text-shadow:0 0 3px white;
+}
+
+.playe-slider-value {
+	background-color:white;
+}
+.playe-list-item:nth-child(even){
+	background-color:rgba(255,255,255,0.2);
+}
+.playe-list-item:hover{
+	cursor:pointer;
+	background-color:white;
+	color:black;
+}
+.playe-list-item:active{
+	background-color:lightgrey;
+	color:black;
+}
+.playe-list-item.playing{
+	text-shadow:1px 1px 2px black;
+	color:yellow;
+}
+
+[data-loading=true] .playe-timeline{
+	pointer-events:none;
+	opacity:0.5;
+}
+.playe-timeline{
+	padding:5px;
+}
+.playe-volume{
+	padding:5px;
+	padding-left:20px;
+}
+.playe-volume .playe-slider-back::after{
+	content:"X";
+	font-family:Webdings;
+	font-size:24px;
+	position:absolute;
+	top:-8px;
+	left:-16px;
+}
+.playe-volume .playe-slider-back{
+	background-color:black;
+}
+.playe-slider-back{
+	min-height:8px;
+	height: 8px;
+	background: dimgrey;
+	border-radius: 15px;
+	cursor:pointer;
+	margin-bottom:20px;
+}
+.playe-slider-played{
+	background: rgb(222,2,9);
+	border-radius: 15px;
+}
+.playe-slider-loaded{
+	background: black;
+	border-radius: 15px;
+}
+.playe-slider-cursor{
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	top: -5px;
+	background-color: rgb(254,244,209);
+	border:3px solid black;
+}
+.playe-slider-cursor:hover{
+	border:3px solid rgb(222,2,9);
+}
+.playe-slider-cursor[data-playe-active=true]{
+	background-color: rgb(222,2,9);
+	border:3px solid rgb(254,244,209);
+}
+.playe-slider-cursor::after{
+	margin-left:-50%;
+	content:attr(data-playe-slider-value);
+	position:absolute;
+	bottom:100%;
+	background-color:black;
+	border-radius:5px;
+	color:white;
+	padding:4px;
+	padding-top:0;
+	opacity:0;
+	transition:0.25s;
+}
+.playe-slider-cursor[data-playe-active=true]::after{
+	opacity:1;
+}
