@@ -28,7 +28,8 @@ A optional parameter can be specified by typing `::` followed by the parameter v
  - `[duration :: separator]` : the duration of the playing track. If a separator if specified, displays: `current time 'separator' duration`
  - `[volume :: base value]` : the volume
  - `[title]` : the title of the playing track
- - `[timeline]` : the timeline<br>
+ - `[timeline]` : the timeline
+ 
 The elements are arranged in a flex layout:
 ```
 //Example of layout:
