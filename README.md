@@ -1,10 +1,10 @@
 # Playe
 An easily customizable javascript audio player
 
-The 'playe' is made by parsing the content of a `<script type="text/playe">` tag into html elements.
+The 'playe' is made by parsing a text written with special markdown.
+The text to parse can be in the content of a `<script type="text/playe">` tag or passed to the `Playe.new()` funtion.
 
-[Example 1](https://gweebitprod.neocities.org/delasoul/)
-[Example 2](https://gweebitprod.neocities.org/volume1/)
+[Example](https://gp.surlesinternets.ch/pages/delasoul/)
 
 ### HTML
 
@@ -22,7 +22,7 @@ A optional parameter can be specified by typing `::` followed by the parameter v
  - `[image :: url]` : an image
  - `[html :: "html"]` : some custom html
  - `[play :: text]` : play button (default '►')
- - `[pause :: text]` : pause button (default '▍ ▍')
+ - `[pause :: text]` : pause button (default '❙❙')
  - `[next :: text]` : next button (default '→')
  - `[previous :: text]` : previous button (default '←')
  - `[duration :: separator]` : the duration of the playing track. If a separator if specified, displays: `current time 'separator' duration`
