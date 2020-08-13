@@ -2,7 +2,68 @@ var playe = (function() {
 	var o = {};
 	var playes = document.querySelectorAll("script[type='text/playe']");
 
-	o.new = function (settings) {};
+	o.new = function (raw) {
+		var playe = document.createElement("div");
+		cPlaye = playe;
+		playe.style = 'display:inline-flex; flex-wrap:wrap;';
+		playe.className = 'playe';
+
+		var parse = o.playeParse(raw);
+		//console.log(parse);
+		addAudio(playe);
+		
+		playe.bloc = document.createElement("div");
+		playe.bloc.style = "position:fixed;top:0;left:0;bottom:0;right:0;z-index:100;";
+		
+		playe.tracks = parse.tracks;
+		playe.audio.src = playe.tracks[0].src[0].value;
+		playe.duration = 0;
+		playe.audio.oncanplaythrough = function(){playe.duration = playe.audio.duration;}
+		playe.playingTrack = 0;
+		playe.settings = parse.settings;
+		if(playe.settings.preload){playe.audio.preload = true;}
+		playe.isPlaying = playe.settings.autoplay;
+		playe.randomList = [];
+
+		playe.play = function () {
+			playe.audio.play();
+			playe.isPlaying = true;
+			playe.className = 'playe playing';
+		};
+		playe.pause = function () {
+			playe.audio.pause();
+			playe.isPlaying = false;
+			playe.className = 'playe stopped';
+		};
+		playe.next = goTrack.bind(playe, 'next');
+		playe.previous = goTrack.bind(playe, 'previous');
+		playe.test = function (v) {
+			if (playe.audio.canPlayType(v) != '') {
+				return true;
+			}
+			return false;
+		};
+		playe.loadTrack = loadTrack;
+
+		playe.audio.onended = goTrack.bind(playe, 'next');
+		
+		playe.audio.onloadstart = function(){playe.dataset.loading = "true"}
+		playe.audio.oncanplaythrough = function(){playe.dataset.loading = "false"}
+
+		if (playe.isPlaying)
+			playe.play();
+
+		o.populate(playe, parse.layout);
+
+		playe.setTitle = function (v) {
+			if (this.parts.title) {
+				this.parts.title.setValue(v);
+			}
+		};
+		playe.setTitle(playe.tracks[0].title);
+
+		return playe;
+	};
 
 	/************************************ CONVERT ************************************
 		converts all the '<script type="text/playe">' into html
@@ -12,72 +73,15 @@ var playe = (function() {
 		for (var i = 0; i < playes.length; i++) {
 			var p = playes[i];
 			var raw = p.innerHTML;
-			var datas = getData(p);
-			var playe = document.createElement("div");
-			cPlaye = playe;
-			var style = 'display:inline-flex; flex-wrap:wrap;';
+			
+			let playe = o.new(raw);
+
+			playe.className += (p.className != "" ? " " + p.className : "");
+
 			if (p.getAttribute('playe-width') != undefined)
-				style += 'width:' + p.getAttribute('playe-width') + ';';
+				playe.style += 'width:' + p.getAttribute('playe-width') + ';';
 			if (p.getAttribute('playe-height') != undefined)
-				style += 'height:' + p.getAttribute('playe-height') + ';';
-			playe.style = style;
-			playe.className = 'playe' + (p.className != "" ? " " + p.className : "");
-
-			var parse = o.playeParse(raw);
-			//console.log(parse);
-			addAudio(playe);
-			
-			playe.bloc = document.createElement("div");
-			playe.bloc.style = "position:fixed;top:0;left:0;bottom:0;right:0;z-index:100;";
-			// playe.appendChild(playe.bloc);
-			// playe.bloc.parentNode.removeChild(playe.bloc);
-			
-			playe.tracks = parse.tracks;
-			playe.audio.src = playe.tracks[0].src[0].value;
-			playe.duration = 0;//function(){return playe.audio.duration;};
-			playe.audio.oncanplaythrough = function(){playe.duration = playe.audio.duration;}
-			playe.playingTrack = 0;
-			playe.settings = parse.settings;
-			if(playe.settings.preload){playe.audio.preload = true;}
-			playe.isPlaying = playe.settings.autoplay;
-			playe.randomList = [];
-
-			playe.play = function () {
-				playe.audio.play();
-				playe.isPlaying = true;
-				playe.className = 'playe playing';
-			};
-			playe.pause = function () {
-				playe.audio.pause();
-				playe.isPlaying = false;
-				playe.className = 'playe stopped';
-			};
-			playe.next = goTrack.bind(playe, 'next');
-			playe.previous = goTrack.bind(playe, 'previous');
-			playe.test = function (v) {
-				if (playe.audio.canPlayType(v) != '') {
-					return true;
-				}
-				return false;
-			};
-			playe.loadTrack = loadTrack;
-
-			playe.audio.onended = goTrack.bind(playe, 'next');
-			
-			playe.audio.onloadstart = function(){playe.dataset.loading = "true"}
-			playe.audio.oncanplaythrough = function(){playe.dataset.loading = "false"}
-
-			if (playe.isPlaying)
-				playe.play();
-
-			o.populate(playe, parse.layout);
-
-			playe.setTitle = function (v) {
-				if (this.parts.title) {
-					this.parts.title.setValue(v);
-				}
-			};
-			playe.setTitle(playe.tracks[0].title);
+				playe.style += 'height:' + p.getAttribute('playe-height') + ';';
 
 			p.parentNode.insertBefore(playe, p);
 			p.parentNode.removeChild(p);
@@ -141,13 +145,6 @@ var playe = (function() {
 		playe.audio.className = 'playe-audio';
 		playe.appendChild(playe.audio);
 	}
-	function setAttr(p, div) {};
-	function getData(p) {
-		var d = {};
-		d.controls = p.getAttribute('playe-controls') != undefined ? true : false;
-		d.loop = p.getAttribute('playe-loop') != undefined ? true : false;
-		return d;
-	};
 	//----------------------------------------------------------------------------------
 	
 	
@@ -439,8 +436,8 @@ var playe = (function() {
 			obj.played.setLenght(1-value);
 			
 			obj.valueChange = function(){
-				playe.audio.volume = this.value;
-				//console.log("new value: "+obj.value);
+				console.log(this.value);
+				playe.audio.volume = parseFloat(this.value);
 			}
 			obj.valueChange();
 			
@@ -469,7 +466,7 @@ var playe = (function() {
 	//==================================================================================
 	var defaultValue = {
 		play: '►',
-		pause: '▍▍',
+		pause: '❙❙',
 		next: '→',
 		previous: '←',
 		slider: '',
@@ -479,15 +476,21 @@ var playe = (function() {
 		time: false
 	};
 	function parseElement(raw) {
-		var m,w = 0;
-		if (m = /([+-]+)?\s*(.+)/.exec(raw)) {
-			raw = m[2];
-			if(m[1]) w = m[1][0] == "-" ? m[1].length*-1 : m[1].length;
+		var a = {
+			element: raw,
+			value: defaultValue[raw]
+		},m;
+		let data = raw.split('::');
+		let left = data[0];
+		if(data[1]){
+			a.value = data[1];
 		}
-		var a = { element: raw, value: defaultValue[raw],weight: w };
-		if (m = /\s*(.+?)\s*(::)\s*(.*)/.exec(raw)) {
+		if (m = /(?:([+-]+)\s*)?(.+)/.exec(left)) {
 			a.element = m[2];
-			a.value = m[4];
+			if(m[1]){
+				a.value = defaultValue[m[2]];
+				a.weight = m[1][0] == "-" ? m[1].length*-1 : m[1].length;
+			}
 		}
 		return a;
 	}
@@ -506,7 +509,7 @@ var playe = (function() {
 	o.playeParse = function (raw) {
 		raw = raw.replace(/\n\s*(:\w{0,3}:)/g, " $1");
 		raw = raw.replace(/\s\/\/(.*)\n/g, "\n");
-		//console.log(raw);
+		
 		var tree = {
 			settings: {},
 			layout: [],
@@ -515,7 +518,7 @@ var playe = (function() {
 		var lines = raw.split(/\r\n|\r|\n/);
 		for (var i = 0; i < lines.length; i++) {
 			var input = lines[i].trim(), m, sm;
-			// Search for Playlist entry pattern /0. Title :: "url"/
+
 			if (m = /(\d)\.\s?(.*?)\s*:(\w{3})?:\s*"([^"]+?)"(.*)/.exec(input)) {
 				var t = {
 					id: m[1]
@@ -539,7 +542,6 @@ var playe = (function() {
 				search(m[5]);
 				tree.tracks.push(t);
 				
-			// Search for Settings pattern /(loop,preload,:def:,autoplay)/
 			} else if (m = /\((.+)\)/.exec(input)) {
 				var s = {
 					loop: false,
@@ -559,7 +561,6 @@ var playe = (function() {
 				};
 				search(m[1]);
 				tree.settings = s;
-			// Search for Layout element pattern /[element :: parameter]/
 			} else if (m = /\[([^\]]+)\](.*)/.exec(input)) {
 				var row = [];
 				row.push(parseElement(m[1]));
@@ -573,7 +574,6 @@ var playe = (function() {
 				tree.layout.push(row);
 			}
 		}
-		//console.log(tree);
 		return tree;
 	};
 	function createElement(playe, e) {
@@ -610,7 +610,6 @@ var playe = (function() {
 	};
 	o.populate = function (playe, lay) {
 		var parts = {};
-		var div = document.createElement('div');
 		for (var i = 0; i < lay.length; i++) {
 			var r = lay[i];
 			var l = r.length;
@@ -623,7 +622,6 @@ var playe = (function() {
 		}
 		playe.parts = parts;
 	};
-	//o.volume = Slider.Volume;
 	return o;
 })();
 playe.convert();
